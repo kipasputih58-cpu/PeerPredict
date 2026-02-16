@@ -1,0 +1,58 @@
+# PeerPredict .gitignore
+
+# Dependencies
+node_modules/
+package-lock.json
+
+# Pear runtime
+.pear/
+pear.json
+
+# Database files
+data/
+*.db
+*.hypercore
+*.hyperbee
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Editor directories
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Build outputs
+dist/
+build/
+*.bundle.js
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Keys and secrets
+*.key
+*.pem
+*.p12
+wallet.json
+private-keys/
