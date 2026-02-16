@@ -207,104 +207,6 @@ Each user peer can:
    - See active prediction markets
    - Filter by category, closing date, pool size
 
----
-
-## 📊 Example Markets
-
-### Market 1: Crypto Price Prediction
-```
-Question: Will Bitcoin (BTC) close above $95,000 on February 28, 2026?
-Resolution Source: CoinGecko BTC/USD price at 23:59 UTC Feb 28
-Pool: 5,420 TNK
-YES odds: 62%
-NO odds: 38%
-Closes: Feb 28, 2026 23:59 UTC
-Status: Active
-```
-
-### Market 2: Project Launch
-```
-Question: Will Trac Network mainnet launch before March 31, 2026?
-Resolution Source: Official Trac Network announcement
-Pool: 1,280 TNK
-YES odds: 78%
-NO odds: 22%
-Closes: Mar 31, 2026 23:59 UTC
-Status: Active
-```
-
-### Market 3: Weather Prediction
-```
-Question: Will it rain in Jakarta on February 20, 2026?
-Resolution Source: Weather.com Jakarta historical data
-Pool: 340 TNK
-YES odds: 45%
-NO odds: 55%
-Closes: Feb 20, 2026 23:59 UTC
-Status: Active
-```
-
----
-
-## 🎮 User Interface
-
-### Dashboard View
-```
-╔═══════════════════════════════════════════════════════════╗
-║  PeerPredict - Decentralized Prediction Market            ║
-╠═══════════════════════════════════════════════════════════╣
-║  Wallet: 0x742d...4a8f  |  Balance: 1,420 TNK            ║
-║  Oracle Score: 76.5%    |  Markets: 12  |  Won: 8        ║
-╠═══════════════════════════════════════════════════════════╣
-║  [Create Market]  [My Positions]  [Verify Outcomes]      ║
-╠═══════════════════════════════════════════════════════════╣
-║  ACTIVE MARKETS                                           ║
-║  ┌─────────────────────────────────────────────────────┐ ║
-║  │ 🔥 Will BTC reach $100k by March?                   │ ║
-║  │    Pool: 8,540 TNK  |  YES: 68%  NO: 32%           │ ║
-║  │    Closes in 12d 4h  |  [View Details]              │ ║
-║  └─────────────────────────────────────────────────────┘ ║
-║  ┌─────────────────────────────────────────────────────┐ ║
-║  │ ⚡ Trac mainnet launch before April?                │ ║
-║  │    Pool: 2,100 TNK  |  YES: 82%  NO: 18%           │ ║
-║  │    Closes in 41d 8h  |  [View Details]              │ ║
-║  └─────────────────────────────────────────────────────┘ ║
-╚═══════════════════════════════════════════════════════════╝
-```
-
-### Market Detail View
-```
-╔═══════════════════════════════════════════════════════════╗
-║  Market #142: Will BTC reach $100k by March 2026?        ║
-╠═══════════════════════════════════════════════════════════╣
-║  Created: Feb 10, 2026 by @satoshi_fan                   ║
-║  Closes: Mar 01, 2026 23:59 UTC (12d 4h remaining)       ║
-║  Resolution: CoinGecko BTC/USD price                      ║
-║  Verifiers: 5 required (3 already signed up)             ║
-╠═══════════════════════════════════════════════════════════╣
-║  CURRENT ODDS                                             ║
-║  ┌──────────────────┬──────────────────┐                 ║
-║  │  YES: 68%        │  NO: 32%         │                 ║
-║  │  5,802 TNK       │  2,738 TNK       │                 ║
-║  │  34 participants │  18 participants │                 ║
-║  └──────────────────┴──────────────────┘                 ║
-║                                                           ║
-║  YOUR POSITION                                            ║
-║  ┌─────────────────────────────────────┐                 ║
-║  │  Not yet staked                     │                 ║
-║  │  [Stake YES] [Stake NO]             │                 ║
-║  └─────────────────────────────────────┘                 ║
-║                                                           ║
-║  PAYOUT CALCULATOR                                        ║
-║  If you stake 100 TNK on YES and win:                    ║
-║  → Potential payout: 147 TNK (47% profit)                ║
-╠═══════════════════════════════════════════════════════════╣
-║  [💬 Market Chat]  [📊 History]  [⚠️ Report Issue]       ║
-╚═══════════════════════════════════════════════════════════╝
-```
-
----
-
 ## 🔐 Security Features
 
 ### Anti-Manipulation
@@ -419,7 +321,7 @@ peerpredict/
 {
   id: "market_142",
   question: "Will BTC reach $100k by March 2026?",
-  creator: "0x742d...4a8f",
+  creator: "trac...wl8f",
   created: 1739203200,
   closes: 1740960000,
   resolutionSource: "CoinGecko BTC/USD",
@@ -428,14 +330,14 @@ peerpredict/
   participants: 52,
   status: "active", // active, closed, verifying, resolved
   outcome: null, // null, "yes", "no"
-  verifiers: ["0xabc...", "0xdef...", "0x123..."]
+  verifiers: ["trac...", "trac1...", "trac3..."]
 }
 ```
 
 ---
 
 ## 📸 Proof of Concept
-screenshot avaliable
+screenshot avaliable in folder
 
 
 
