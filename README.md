@@ -435,35 +435,9 @@ peerpredict/
 ---
 
 ## 📸 Proof of Concept
+screenshot avaliable
 
-### Screenshot 1: Dashboard
-![Dashboard showing active markets with live pools and odds](screenshots/dashboard.png)
 
-### Screenshot 2: Market Creation
-![Form to create new prediction market with all parameters](screenshots/create-market.png)
-
-### Screenshot 3: Staking Interface
-![User placing a stake on YES outcome with payout calculator](screenshots/stake.png)
-
-### Screenshot 4: Verification
-![Verifiers voting on market outcome with evidence](screenshots/verify.png)
-
-### Screenshot 5: Payout Claimed
-![Success message showing payout claimed to wallet](screenshots/payout.png)
-
-### Video Demo
-[Watch full walkthrough](demo-video.mp4)
-
-**Demo Flow:**
-1. Create market "Will it rain tomorrow?"
-2. Two users stake on opposite outcomes
-3. Resolution date arrives
-4. Verifiers vote on actual outcome
-5. Consensus reached
-6. Winner claims payout
-7. Reputation updated
-
----
 
 ## 🤝 Contributing
 
