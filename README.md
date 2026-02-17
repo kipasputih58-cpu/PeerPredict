@@ -158,7 +158,7 @@ PeerPredict leverages Intercom's dual-layer architecture:
 
 ```bash
 # Clone the repository
-git clone https://github.com/YOUR_USERNAME/peerpredict.git
+git clone https://github.com/kipasputih58-cpu/peerpredict.git
 cd peerpredict
 
 # Install dependencies via Pear
