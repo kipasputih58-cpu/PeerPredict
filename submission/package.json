@@ -1,0 +1,52 @@
+{
+  "name": "peerpredict",
+  "version": "1.0.0",
+  "description": "Decentralized Prediction Market with Wallet Integration - Trac Systems Intercom Competition Entry",
+  "author": "PeerPredict Team",
+  "license": "MIT",
+  "type": "module",
+  "main": "index.js",
+  "browser": "index.html",
+  "pear": {
+    "name": "peerpredict",
+    "version": "1.0.0",
+    "description": "Decentralized Prediction Market with Wallet",
+    "author": "PeerPredict Team",
+    "license": "MIT",
+    "dir": ".",
+    "main": "index.js",
+    "browser": "index.html",
+    "platforms": ["linux", "macos", "windows", "android"],
+    "protocol": "peerpredict",
+    "channel": "peerpredict-v1"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node index.js --dev",
+    "test": "node test.js"
+  },
+  "dependencies": {
+    "b4a": "^1.6.6",
+    "hyperswarm": "^4.8.4",
+    "hypercore": "^10.37.1",
+    "corestore": "^6.16.1",
+    "hyperbee": "^2.20.1",
+    "crypto-js": "^4.2.0"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "p2p",
+    "prediction-market",
+    "decentralized",
+    "wallet",
+    "betting",
+    "pear",
+    "holepunch",
+    "trac-systems",
+    "intercom",
+    "blockchain"
+  ]
+}

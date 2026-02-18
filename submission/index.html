@@ -1,0 +1,1430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PeerPredict - Trac Prediction Market</title>
+  <style>
+    :root {
+      --primary: #f7931a;
+      --primary-dark: #e8850f;
+      --primary-light: #ffb84d;
+      --secondary: #10b981;
+      --secondary-dark: #059669;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --bg-dark: #0f172a;
+      --bg-card: #1e293b;
+      --bg-input: #334155;
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --border: #475569;
+      --trac-gradient: linear-gradient(135deg, #f7931a 0%, #ffb84d 100%);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+
+    /* Header */
+    header {
+      background: linear-gradient(180deg, rgba(247, 147, 26, 0.1) 0%, transparent 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 0;
+      margin-bottom: 30px;
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      font-size: 2rem;
+    }
+
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: var(--trac-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .logo-text p {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+
+    .trac-badge {
+      background: var(--trac-gradient);
+      color: #000;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      margin-left: 10px;
+    }
+
+    /* Wallet Section */
+    .wallet-section {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .wallet-info {
+      background: var(--bg-card);
+      border: 1px solid var(--primary);
+      border-radius: 12px;
+      padding: 12px 20px;
+      text-align: right;
+    }
+
+    .wallet-address {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+    }
+
+    .wallet-balance {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    .wallet-balance .trac-icon {
+      color: var(--primary);
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: var(--trac-gradient);
+      color: #000;
+    }
+
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(247, 147, 26, 0.4); }
+
+    .btn-secondary {
+      background: var(--bg-input);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover { background: var(--border); }
+
+    .btn-success {
+      background: linear-gradient(135deg, #10b981 0%, #14b8a6 100%);
+      color: white;
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: white;
+    }
+
+    .btn-sm { padding: 6px 12px; font-size: 0.8rem; }
+    .btn-lg { padding: 14px 28px; font-size: 1rem; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Dashboard Grid */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 350px;
+      gap: 25px;
+    }
+
+    @media (max-width: 1024px) {
+      .dashboard-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Cards */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card-header h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-body { padding: 20px; }
+
+    /* Stats Row */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    @media (max-width: 768px) {
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-top: 5px;
+    }
+
+    /* Filter Tabs */
+    .filter-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .filter-tab {
+      padding: 8px 16px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+
+    .filter-tab:hover { background: var(--border); color: var(--text-primary); }
+    .filter-tab.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #000;
+    }
+
+    /* Prediction Card */
+    .prediction-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      margin-bottom: 15px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .prediction-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 40px rgba(247, 147, 26, 0.15);
+    }
+
+    .prediction-card-header {
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 15px;
+    }
+
+    .prediction-question {
+      font-size: 1rem;
+      font-weight: 600;
+      flex: 1;
+      line-height: 1.4;
+    }
+
+    .prediction-status {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .status-active { background: rgba(16, 185, 129, 0.2); color: var(--secondary); }
+    .status-resolved { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+
+    .prediction-meta {
+      display: flex;
+      gap: 20px;
+      padding: 0 20px 15px;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .prediction-meta span { display: flex; align-items: center; gap: 5px; }
+
+    /* Vote Options */
+    .vote-options {
+      padding: 15px 20px;
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .vote-option { margin-bottom: 12px; }
+    .vote-option:last-child { margin-bottom: 0; }
+
+    .vote-option-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      font-size: 0.85rem;
+    }
+
+    .vote-option-label { font-weight: 500; }
+    .vote-option-stats { color: var(--text-secondary); }
+
+    .vote-bar {
+      height: 10px;
+      background: var(--bg-input);
+      border-radius: 5px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .vote-bar-fill {
+      height: 100%;
+      border-radius: 5px;
+      transition: width 0.5s ease;
+    }
+
+    .vote-bar-fill.yes { background: linear-gradient(90deg, var(--secondary), #14b8a6); }
+    .vote-bar-fill.no { background: linear-gradient(90deg, var(--danger), #f97316); }
+
+    /* Vote Buttons */
+    .vote-buttons {
+      display: flex;
+      gap: 10px;
+      padding: 15px 20px;
+      border-top: 1px solid var(--border);
+      align-items: center;
+    }
+
+    .your-vote {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      background: rgba(247, 147, 26, 0.2);
+      border-radius: 20px;
+      font-size: 0.75rem;
+      color: var(--primary);
+    }
+
+    /* Resolution Banner */
+    .resolution-banner {
+      margin: 15px 20px;
+      padding: 15px;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid var(--secondary);
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .resolution-banner h4 { color: var(--secondary); margin-bottom: 5px; }
+    .resolution-banner p { font-size: 0.85rem; color: var(--text-secondary); }
+
+    /* Sidebar */
+    .sidebar-card { margin-bottom: 20px; }
+
+    /* Wallet Actions */
+    .wallet-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .wallet-action-btn {
+      padding: 15px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .wallet-action-btn:hover {
+      background: var(--border);
+      border-color: var(--primary);
+    }
+
+    .wallet-action-btn .icon { font-size: 1.5rem; margin-bottom: 5px; }
+    .wallet-action-btn .label { font-size: 0.85rem; color: var(--text-secondary); }
+
+    /* Transaction List */
+    .tx-list { max-height: 300px; overflow-y: auto; }
+
+    .tx-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tx-item:last-child { border-bottom: none; }
+
+    .tx-info { flex: 1; }
+
+    .tx-type {
+      font-weight: 500;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tx-desc {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .tx-amount {
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .tx-amount.positive { color: var(--secondary); }
+    .tx-amount.negative { color: var(--danger); }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(4px);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal.active { display: flex; }
+
+    .modal-content {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h2 { font-size: 1.25rem; }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 5px;
+    }
+
+    .modal-body { padding: 20px; }
+
+    /* Forms */
+    .form-group { margin-bottom: 20px; }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 12px 16px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text-primary);
+      font-size: 1rem;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .form-group textarea { resize: vertical; min-height: 100px; }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    /* Balance Display */
+    .balance-display {
+      background: var(--bg-input);
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .balance-display .label {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-bottom: 5px;
+    }
+
+    .balance-display .amount {
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    .balance-display .trac-symbol {
+      color: var(--primary);
+      font-size: 1.2rem;
+    }
+
+    /* Loading */
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-secondary);
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--border);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Toast */
+    .toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .toast {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 15px 20px;
+      min-width: 300px;
+      animation: slideIn 0.3s ease;
+    }
+
+    .toast.success { border-color: var(--secondary); }
+    .toast.error { border-color: var(--danger); }
+
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-secondary);
+    }
+
+    .empty-state .icon { font-size: 4rem; margin-bottom: 15px; }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 30px;
+      margin-top: 40px;
+      border-top: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+    }
+
+    /* Wallet Connect Section */
+    .wallet-connect-section {
+      background: linear-gradient(135deg, rgba(247, 147, 26, 0.1) 0%, rgba(255, 184, 77, 0.05) 100%);
+      border: 1px solid var(--primary);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .wallet-connect-btn {
+      width: 100%;
+      padding: 15px;
+      background: var(--trac-gradient);
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #000;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .wallet-connect-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(247, 147, 26, 0.4);
+    }
+
+    .connected-badge {
+      background: var(--secondary);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header-content { flex-direction: column; align-items: flex-start; }
+      .wallet-section { width: 100%; justify-content: space-between; }
+      .form-row { grid-template-columns: 1fr; }
+      .vote-buttons { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Header -->
+  <header>
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">
+          <span class="logo-icon">🔮</span>
+          <div class="logo-text">
+            <h1>PeerPredict</h1>
+            <p>Decentralized Prediction Market <span class="trac-badge">TRAC</span></p>
+          </div>
+        </div>
+
+        <div class="wallet-section">
+          <div class="wallet-info">
+            <div class="wallet-address" id="wallet-address">Connecting...</div>
+            <div class="wallet-balance">
+              <span id="wallet-balance">0</span>
+              <span class="trac-symbol">Trac</span>
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="openDepositModal()">+ Deposit</button>
+          <button class="btn btn-secondary" onclick="openWithdrawModal()">Withdraw</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container">
+    <!-- Stats Row -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-value" id="stat-peers">0</div>
+        <div class="stat-label">Connected Peers</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-total">0</div>
+        <div class="stat-label">Total Predictions</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-active">0</div>
+        <div class="stat-label">Active Markets</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-stake">0</div>
+        <div class="stat-label">Total Staked (Trac)</div>
+      </div>
+    </div>
+
+    <!-- Dashboard Grid -->
+    <div class="dashboard-grid">
+      <!-- Main Column -->
+      <div class="main-column">
+        <!-- Actions -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
+          <div class="filter-tabs">
+            <div class="filter-tab active" onclick="loadPredictions('all')">All</div>
+            <div class="filter-tab" onclick="loadPredictions('active')">Active</div>
+            <div class="filter-tab" onclick="loadPredictions('resolved')">Resolved</div>
+            <div class="filter-tab" onclick="loadPredictions('voted')">My Votes</div>
+          </div>
+          <button class="btn btn-primary btn-lg" onclick="openCreateModal()">+ Create Prediction</button>
+        </div>
+
+        <!-- Predictions List -->
+        <div id="predictions-list">
+          <div class="loading">
+            <div class="spinner"></div>
+            <p>Loading predictions...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <!-- Wallet Connect -->
+        <div class="card sidebar-card">
+          <div class="card-header">
+            <h2>🔗 Trac Wallet</h2>
+            <span id="wallet-status" class="connected-badge" style="display: none;">Connected</span>
+          </div>
+          <div class="card-body">
+            <div class="wallet-connect-section" id="wallet-connect-section">
+              <button class="wallet-connect-btn" onclick="openConnectModal()">
+                <span>🔗</span>
+                <span>Connect Trac Wallet</span>
+              </button>
+              <p style="text-align: center; font-size: 0.8rem; color: var(--text-secondary); margin-top: 10px;">
+                Or use auto-generated wallet
+              </p>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="wallet-actions">
+              <div class="wallet-action-btn" onclick="openDepositModal()">
+                <div class="icon">💰</div>
+                <div class="label">Deposit</div>
+              </div>
+              <div class="wallet-action-btn" onclick="openWithdrawModal()">
+                <div class="icon">📤</div>
+                <div class="label">Withdraw</div>
+              </div>
+              <div class="wallet-action-btn" onclick="openTransferModal()">
+                <div class="icon">↗️</div>
+                <div class="label">Transfer</div>
+              </div>
+              <div class="wallet-action-btn" onclick="openCreateModal()">
+                <div class="icon">➕</div>
+                <div class="label">Create</div>
+              </div>
+            </div>
+
+            <!-- Balance Display -->
+            <div class="balance-display">
+              <div class="label">Available / Locked</div>
+              <div class="amount"><span id="available-balance">0</span> / <span id="locked-balance">0</span> <span class="trac-symbol">Trac</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Transaction History -->
+        <div class="card sidebar-card">
+          <div class="card-header">
+            <h2>📜 Transactions</h2>
+            <button class="btn btn-sm btn-secondary" onclick="loadTransactions()">Refresh</button>
+          </div>
+          <div class="card-body">
+            <div class="tx-list" id="tx-list">
+              <div class="loading" style="padding: 20px;">
+                <p>Loading...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Network Status -->
+        <div class="card sidebar-card">
+          <div class="card-header">
+            <h2>🌐 Network</h2>
+          </div>
+          <div class="card-body">
+            <div style="display: grid; gap: 10px;">
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: var(--text-secondary);">Status</span>
+                <span style="color: var(--secondary);">● Connected</span>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: var(--text-secondary);">Network</span>
+                <span style="color: var(--primary);">Trac Mainnet</span>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: var(--text-secondary);">Platform</span>
+                <span>Pear (Holepunch)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>PeerPredict - Decentralized Prediction Market on Trac</p>
+    <p style="margin-top: 5px;">Trac Systems Intercom Competition Entry</p>
+  </footer>
+
+  <!-- Connect Wallet Modal -->
+  <div class="modal" id="connect-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>🔗 Connect Trac Wallet</h2>
+        <button class="close-btn" onclick="closeModal('connect-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Your Trac Address</label>
+          <input type="text" id="connect-address" placeholder="Enter your Trac address (e.g., 1A1zP1...)" style="font-family: monospace;">
+        </div>
+        <div style="background: rgba(247, 147, 26, 0.1); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+          <p style="font-size: 0.85rem; color: var(--text-secondary);">
+            <strong>Note:</strong> Enter your Trac wallet address. Supports Bitcoin-style addresses (starting with 1, 3, or bc1).
+          </p>
+        </div>
+        <button class="btn btn-primary btn-lg" style="width: 100%;" onclick="executeConnect()">
+          Connect Wallet
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Deposit Modal -->
+  <div class="modal" id="deposit-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>💰 Deposit Trac Tokens</h2>
+        <button class="close-btn" onclick="closeModal('deposit-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="balance-display">
+          <div class="label">Current Balance</div>
+          <div class="amount"><span id="deposit-current-balance">0</span> <span class="trac-symbol">Trac</span></div>
+        </div>
+        <div class="form-group">
+          <label>Amount to Deposit</label>
+          <input type="number" id="deposit-amount" placeholder="Enter amount" min="1">
+        </div>
+        <button class="btn btn-primary btn-lg" style="width: 100%;" onclick="executeDeposit()">
+          Confirm Deposit
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Withdraw Modal -->
+  <div class="modal" id="withdraw-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>📤 Withdraw Trac Tokens</h2>
+        <button class="close-btn" onclick="closeModal('withdraw-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="balance-display">
+          <div class="label">Available Balance</div>
+          <div class="amount"><span id="withdraw-available">0</span> <span class="trac-symbol">Trac</span></div>
+        </div>
+        <div class="form-group">
+          <label>Amount to Withdraw</label>
+          <input type="number" id="withdraw-amount" placeholder="Enter amount" min="1">
+        </div>
+        <div class="form-group">
+          <label>Destination Trac Address</label>
+          <input type="text" id="withdraw-address" placeholder="1A1zP1..." style="font-family: monospace;">
+        </div>
+        <button class="btn btn-danger btn-lg" style="width: 100%;" onclick="executeWithdraw()">
+          Confirm Withdrawal
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Transfer Modal -->
+  <div class="modal" id="transfer-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>↗️ Transfer Trac Tokens</h2>
+        <button class="close-btn" onclick="closeModal('transfer-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="balance-display">
+          <div class="label">Available Balance</div>
+          <div class="amount"><span id="transfer-available">0</span> <span class="trac-symbol">Trac</span></div>
+        </div>
+        <div class="form-group">
+          <label>Amount</label>
+          <input type="number" id="transfer-amount" placeholder="Enter amount" min="1">
+        </div>
+        <div class="form-group">
+          <label>Recipient Trac Address</label>
+          <input type="text" id="transfer-address" placeholder="1A1zP1..." style="font-family: monospace;">
+        </div>
+        <button class="btn btn-primary btn-lg" style="width: 100%;" onclick="executeTransfer()">
+          Send Transfer
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Prediction Modal -->
+  <div class="modal" id="create-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>➕ Create Prediction</h2>
+        <button class="close-btn" onclick="closeModal('create-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Question / Prediction</label>
+          <textarea id="create-question" placeholder="e.g., Will BTC hit $100k by end of 2024?"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Options (comma-separated)</label>
+          <input type="text" id="create-options" value="Yes, No" placeholder="Yes, No, Maybe">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Your Initial Stake (Trac)</label>
+            <input type="number" id="create-stake" value="10" min="1">
+          </div>
+          <div class="form-group">
+            <label>Your Vote</label>
+            <select id="create-vote">
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn btn-success btn-lg" style="width: 100%;" onclick="executeCreate()">
+          Create Prediction
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vote Modal -->
+  <div class="modal" id="vote-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>🗳️ Place Your Bet</h2>
+        <button class="close-btn" onclick="closeModal('vote-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="background: var(--bg-input); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+          <p id="vote-question" style="font-weight: 600;"></p>
+          <p id="vote-current" style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 5px;"></p>
+        </div>
+        <div class="balance-display">
+          <div class="label">Available Balance</div>
+          <div class="amount"><span id="vote-balance">0</span> <span class="trac-symbol">Trac</span></div>
+        </div>
+        <div class="form-group">
+          <label>Select Your Vote</label>
+          <div id="vote-options" style="display: flex; gap: 10px;"></div>
+        </div>
+        <div class="form-group">
+          <label>Stake Amount (Trac)</label>
+          <input type="number" id="vote-stake" value="10" min="1">
+        </div>
+        <button class="btn btn-primary btn-lg" style="width: 100%;" onclick="executeVote()">
+          Confirm Bet
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Resolve Modal -->
+  <div class="modal" id="resolve-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>✅ Resolve Prediction</h2>
+        <button class="close-btn" onclick="closeModal('resolve-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="background: var(--bg-input); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+          <p id="resolve-question" style="font-weight: 600;"></p>
+        </div>
+        <div class="form-group">
+          <label>Select Outcome</label>
+          <div id="resolve-options" style="display: flex; gap: 10px;"></div>
+        </div>
+        <div style="background: rgba(245, 158, 11, 0.1); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+          <p style="font-size: 0.85rem; color: var(--warning);">
+            Warning: Resolution is final and cannot be undone.
+          </p>
+        </div>
+        <button class="btn btn-success btn-lg" style="width: 100%;" onclick="executeResolve()">
+          Confirm Resolution
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // State
+    let walletInfo = { address: '', balance: 0, availableBalance: 0, lockedBalance: 0, connected: false };
+    let predictions = [];
+    let transactions = [];
+    let currentFilter = 'all';
+    let selectedVotePrediction = null;
+    let selectedVoteChoice = null;
+    let selectedResolvePrediction = null;
+    let selectedResolveOutcome = null;
+
+    // API Helpers
+    async function api(endpoint, method = 'GET', body = null) {
+      const opts = { method, headers: { 'Content-Type': 'application/json' } };
+      if (body) opts.body = JSON.stringify(body);
+      const res = await fetch(endpoint, opts);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Request failed');
+      return data;
+    }
+
+    // Toast
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.innerHTML = `<p>${message}</p>`;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 4000);
+    }
+
+    // Modal Helpers
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+    function openModal(id) { document.getElementById(id).classList.add('active'); }
+
+    // Wallet
+    async function loadWallet() {
+      try {
+        const data = await api('/api/wallet');
+        walletInfo = data;
+        
+        document.getElementById('wallet-address').textContent = 
+          data.address.slice(0, 6) + '...' + data.address.slice(-4);
+        document.getElementById('wallet-balance').textContent = data.balance;
+        document.getElementById('available-balance').textContent = data.availableBalance;
+        document.getElementById('locked-balance').textContent = data.lockedBalance;
+        
+        document.getElementById('deposit-current-balance').textContent = data.balance;
+        document.getElementById('withdraw-available').textContent = data.availableBalance;
+        document.getElementById('transfer-available').textContent = data.availableBalance;
+        document.getElementById('vote-balance').textContent = data.availableBalance;
+
+        // Update wallet status
+        if (data.connected) {
+          document.getElementById('wallet-status').style.display = 'inline';
+        }
+      } catch (err) {
+        console.error('Failed to load wallet:', err);
+      }
+    }
+
+    async function loadTransactions() {
+      try {
+        const data = await api('/api/wallet/transactions?limit=10');
+        transactions = data;
+        renderTransactions();
+      } catch (err) {
+        console.error('Failed to load transactions:', err);
+      }
+    }
+
+    function renderTransactions() {
+      const container = document.getElementById('tx-list');
+      if (transactions.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No transactions yet</p>';
+        return;
+      }
+      
+      const icons = { deposit: '💰', withdraw: '📤', transfer: '↗️', bet: '🎲', winnings: '🏆', reward: '🎁' };
+      container.innerHTML = transactions.map(tx => {
+        const isPositive = tx.amount >= 0;
+        return `
+          <div class="tx-item">
+            <div class="tx-info">
+              <div class="tx-type"><span>${icons[tx.type] || '📋'}</span><span>${tx.type}</span></div>
+              <div class="tx-desc">${tx.description || ''}</div>
+            </div>
+            <div class="tx-amount ${isPositive ? 'positive' : 'negative'}">
+              ${isPositive ? '+' : ''}${tx.amount} Trac
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function loadStatus() {
+      try {
+        const data = await api('/api/status');
+        document.getElementById('stat-peers').textContent = data.connectedPeers;
+        document.getElementById('stat-total').textContent = data.totalPredictions;
+        document.getElementById('stat-active').textContent = data.activePredictions;
+        const totalStake = predictions.reduce((sum, p) => sum + (p.totalStake || 0), 0);
+        document.getElementById('stat-stake').textContent = totalStake;
+      } catch (err) {
+        console.error('Failed to load status:', err);
+      }
+    }
+
+    async function loadPredictions(filter = 'all') {
+      currentFilter = filter;
+      document.querySelectorAll('.filter-tab').forEach(tab => {
+        tab.classList.toggle('active', tab.textContent.toLowerCase().includes(filter));
+      });
+      
+      try {
+        predictions = await api(`/api/predictions?filter=${filter}`);
+        renderPredictions();
+      } catch (err) {
+        console.error('Failed to load predictions:', err);
+        document.getElementById('predictions-list').innerHTML = '<div class="empty-state"><p>Failed to load</p></div>';
+      }
+    }
+
+    function renderPredictions() {
+      const container = document.getElementById('predictions-list');
+      
+      if (predictions.length === 0) {
+        container.innerHTML = '<div class="empty-state"><div class="icon">🔮</div><h3>No predictions found</h3><p>Be the first to create a prediction market!</p></div>';
+        return;
+      }
+      
+      container.innerHTML = predictions.map(pred => {
+        const isActive = !pred.resolved;
+        const userVote = pred.votes?.find(v => v.voterAddress === walletInfo.address);
+        const totalVotes = pred.votes?.length || 0;
+        const totalStake = pred.totalStake || 0;
+        
+        const stats = {};
+        pred.options.forEach(opt => { stats[opt] = { votes: 0, stake: 0, percentage: 0 }; });
+        pred.votes?.forEach(v => { stats[v.choice].votes++; stats[v.choice].stake += v.stake; });
+        Object.keys(stats).forEach(opt => {
+          stats[opt].percentage = totalStake > 0 ? Math.round((stats[opt].stake / totalStake) * 100) : 0;
+        });
+        
+        let resolutionHTML = pred.resolved ? `<div class="resolution-banner"><h4>✅ Resolved: ${pred.resolution}</h4><p>Winners can claim their payouts!</p></div>` : '';
+        let userVoteHTML = userVote ? `<span class="your-vote">✓ You voted ${userVote.choice} (${userVote.stake} Trac)</span>` : '';
+        
+        let actionButtons = '';
+        if (isActive) {
+          actionButtons = `<div class="vote-buttons">${userVoteHTML || ''}<button class="btn btn-primary btn-sm" onclick="openVoteModal('${pred.id}')">${userVote ? 'Change Vote' : 'Vote / Bet'}</button><button class="btn btn-secondary btn-sm" onclick="openResolveModal('${pred.id}')">Resolve</button></div>`;
+        } else if (userVote && pred.resolution === userVote.choice) {
+          actionButtons = `<div class="vote-buttons"><span class="your-vote">🏆 You won!</span><button class="btn btn-success btn-sm" onclick="claimWinnings('${pred.id}')">Claim Winnings</button></div>`;
+        } else if (userVote) {
+          actionButtons = `<div class="vote-buttons"><span class="your-vote">😔 Better luck next time</span></div>`;
+        }
+        
+        return `
+          <div class="prediction-card">
+            <div class="prediction-card-header">
+              <div class="prediction-question">${escapeHTML(pred.question)}</div>
+              <span class="prediction-status ${isActive ? 'status-active' : 'status-resolved'}">${isActive ? '🔵 Active' : '✅ Resolved'}</span>
+            </div>
+            <div class="prediction-meta"><span>🗳️ ${totalVotes} votes</span><span>💰 ${totalStake} Trac</span><span>👤 ${pred.createdBy?.slice(0, 8)}...</span></div>
+            <div class="vote-options">
+              ${pred.options.map(opt => `
+                <div class="vote-option">
+                  <div class="vote-option-header"><span class="vote-option-label">${escapeHTML(opt)}</span><span class="vote-option-stats">${stats[opt].percentage}% • ${stats[opt].stake} Trac</span></div>
+                  <div class="vote-bar"><div class="vote-bar-fill ${opt.toLowerCase()}" style="width: ${stats[opt].percentage}%"></div></div>
+                </div>
+              `).join('')}
+            </div>
+            ${resolutionHTML}${actionButtons}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function escapeHTML(str) { const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
+
+    // Connect Wallet
+    function openConnectModal() { openModal('connect-modal'); }
+
+    async function executeConnect() {
+      const address = document.getElementById('connect-address').value.trim();
+      if (!address) { showToast('Please enter a Trac address', 'error'); return; }
+      
+      try {
+        await api('/api/wallet/connect', 'POST', { address });
+        closeModal('connect-modal');
+        showToast(`Connected wallet: ${address.slice(0, 8)}...`);
+        loadWallet();
+        document.getElementById('wallet-status').style.display = 'inline';
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    // Deposit
+    function openDepositModal() { openModal('deposit-modal'); }
+
+    async function executeDeposit() {
+      const amount = parseFloat(document.getElementById('deposit-amount').value);
+      if (!amount || amount <= 0) { showToast('Please enter a valid amount', 'error'); return; }
+      
+      try {
+        await api('/api/wallet/deposit', 'POST', { amount });
+        closeModal('deposit-modal');
+        document.getElementById('deposit-amount').value = '';
+        showToast(`Deposited ${amount} Trac!`);
+        loadWallet();
+        loadTransactions();
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    // Withdraw
+    function openWithdrawModal() { openModal('withdraw-modal'); }
+
+    async function executeWithdraw() {
+      const amount = parseFloat(document.getElementById('withdraw-amount').value);
+      const address = document.getElementById('withdraw-address').value.trim();
+      
+      if (!amount || amount <= 0) { showToast('Please enter a valid amount', 'error'); return; }
+      if (!address) { showToast('Please enter a Trac address', 'error'); return; }
+      
+      try {
+        await api('/api/wallet/withdraw', 'POST', { amount, toAddress: address });
+        closeModal('withdraw-modal');
+        document.getElementById('withdraw-amount').value = '';
+        document.getElementById('withdraw-address').value = '';
+        showToast(`Withdrawal of ${amount} Trac submitted!`);
+        loadWallet();
+        loadTransactions();
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    // Transfer
+    function openTransferModal() { openModal('transfer-modal'); }
+
+    async function executeTransfer() {
+      const amount = parseFloat(document.getElementById('transfer-amount').value);
+      const address = document.getElementById('transfer-address').value.trim();
+      
+      if (!amount || amount <= 0) { showToast('Please enter a valid amount', 'error'); return; }
+      if (!address) { showToast('Please enter a Trac address', 'error'); return; }
+      
+      try {
+        await api('/api/wallet/transfer', 'POST', { amount, toAddress: address });
+        closeModal('transfer-modal');
+        document.getElementById('transfer-amount').value = '';
+        document.getElementById('transfer-address').value = '';
+        showToast(`Transferred ${amount} Trac!`);
+        loadWallet();
+        loadTransactions();
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    // Create Prediction
+    function openCreateModal() { openModal('create-modal'); }
+
+    async function executeCreate() {
+      const question = document.getElementById('create-question').value.trim();
+      const optionsStr = document.getElementById('create-options').value.trim();
+      const stake = parseFloat(document.getElementById('create-stake').value) || 0;
+      const choice = document.getElementById('create-vote').value;
+      
+      if (!question) { showToast('Please enter a question', 'error'); return; }
+      
+      const options = optionsStr.split(',').map(o => o.trim()).filter(o => o);
+      
+      try {
+        await api('/api/prediction/create', 'POST', { question, options, initialStake: stake, initialChoice: stake > 0 ? choice : null });
+        closeModal('create-modal');
+        document.getElementById('create-question').value = '';
+        showToast('Prediction created!');
+        loadPredictions(currentFilter);
+        loadWallet();
+        loadStatus();
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    // Vote
+    function openVoteModal(predictionId) {
+      selectedVotePrediction = predictions.find(p => p.id === predictionId);
+      if (!selectedVotePrediction) return;
+      
+      const userVote = selectedVotePrediction.votes?.find(v => v.voterAddress === walletInfo.address);
+      document.getElementById('vote-question').textContent = selectedVotePrediction.question;
+      document.getElementById('vote-current').textContent = userVote ? `Current: ${userVote.choice} (${userVote.stake} Trac)` : 'No current vote';
+      
+      const optionsContainer = document.getElementById('vote-options');
+      optionsContainer.innerHTML = selectedVotePrediction.options.map(opt => `
+        <button class="btn btn-secondary" style="flex: 1;" onclick="selectVoteOption('${opt}')">${opt}</button>
+      `).join('');
+      
+      selectedVoteChoice = userVote?.choice || selectedVotePrediction.options[0];
+      document.getElementById('vote-stake').value = userVote?.stake || 10;
+      openModal('vote-modal');
+    }
+
+    function selectVoteOption(opt) {
+      selectedVoteChoice = opt;
+      document.querySelectorAll('#vote-options .btn').forEach(btn => {
+        btn.classList.toggle('btn-primary', btn.textContent.trim() === opt);
+        btn.classList.toggle('btn-secondary', btn.textContent.trim() !== opt);
+      });
+    }
+
+    async function executeVote() {
+      const stake = parseFloat(document.getElementById('vote-stake').value);
+      if (!selectedVotePrediction || !selectedVoteChoice) { showToast('Please select an option', 'error'); return; }
+      if (!stake || stake <= 0) { showToast('Please enter a valid stake', 'error'); return; }
+      if (stake > walletInfo.availableBalance) { showToast('Insufficient balance', 'error'); return; }
+      
+      try {
+        await api('/api/prediction/vote', 'POST', { predictionId: selectedVotePrediction.id, choice: selectedVoteChoice, stake });
+        closeModal('vote-modal');
+        showToast(`Bet placed: ${stake} Trac on "${selectedVoteChoice}"`);
+        loadPredictions(currentFilter);
+        loadWallet();
+        loadTransactions();
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    // Resolve
+    function openResolveModal(predictionId) {
+      selectedResolvePrediction = predictions.find(p => p.id === predictionId);
+      if (!selectedResolvePrediction) return;
+      
+      document.getElementById('resolve-question').textContent = selectedResolvePrediction.question;
+      const optionsContainer = document.getElementById('resolve-options');
+      optionsContainer.innerHTML = selectedResolvePrediction.options.map(opt => `
+        <button class="btn btn-secondary" style="flex: 1;" onclick="selectResolveOption('${opt}')">${opt}</button>
+      `).join('');
+      selectedResolveOutcome = null;
+      openModal('resolve-modal');
+    }
+
+    function selectResolveOption(opt) {
+      selectedResolveOutcome = opt;
+      document.querySelectorAll('#resolve-options .btn').forEach(btn => {
+        const isSelected = btn.textContent.trim() === opt;
+        btn.classList.toggle('btn-success', isSelected);
+        btn.classList.toggle('btn-secondary', !isSelected);
+      });
+    }
+
+    async function executeResolve() {
+      if (!selectedResolvePrediction || !selectedResolveOutcome) { showToast('Please select an outcome', 'error'); return; }
+      
+      try {
+        await api('/api/prediction/resolve', 'POST', { predictionId: selectedResolvePrediction.id, outcome: selectedResolveOutcome });
+        closeModal('resolve-modal');
+        showToast(`Prediction resolved: ${selectedResolveOutcome}`);
+        loadPredictions(currentFilter);
+        loadStatus();
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    // Claim Winnings
+    async function claimWinnings(predictionId) {
+      try {
+        const result = await api('/api/prediction/claim', 'POST', { predictionId });
+        showToast(`Claimed ${result.payout} Trac!`);
+        loadWallet();
+        loadTransactions();
+        loadPredictions(currentFilter);
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    // Init
+    async function init() {
+      await Promise.all([loadWallet(), loadStatus(), loadPredictions()]);
+      loadTransactions();
+      setInterval(() => { loadWallet(); loadStatus(); loadPredictions(currentFilter); }, 10000);
+    }
+
+    document.addEventListener('click', (e) => { if (e.target.classList.contains('modal')) e.target.classList.remove('active'); });
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

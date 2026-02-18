@@ -1,56 +1,26 @@
 {
-  "name": "peerpredict",
-  "version": "1.0.0",
-  "description": "Decentralized prediction market built on Intercom (Trac Network)",
-  "main": "index.js",
+  "name": "contract-test-latest",
+  "version": "0.0.1",
   "type": "module",
-  "scripts": {
-    "start": "pear run .",
-    "admin": "pear run . --admin",
-    "dev": "pear dev .",
-    "test": "pear test"
-  },
-  "keywords": [
-    "prediction-market",
-    "p2p",
-    "trac-network",
-    "intercom",
-    "decentralized",
-    "blockchain",
-    "web3"
-  ],
-  "author": "PeerPredict Team",
-  "license": "MIT",
+  "main": "index.js",
   "pear": {
-    "name": "PeerPredict",
-    "gui": {
-      "backgroundColor": "#1a1a2e",
-      "width": 1200,
-      "height": 800
-    },
-    "links": {
-      "source": "https://github.com/YOUR_USERNAME/peerpredict"
-    }
+    "name": "contract-test-latest",
+    "type": "terminal"
   },
   "dependencies": {
-    "hyperswarm": "^4.7.14",
-    "hyperbee": "^2.12.0",
-    "hypercore-crypto": "^3.4.0",
-    "b4a": "^1.6.4",
-    "compact-encoding": "^2.12.0"
+    "b4a": "^1.6.7",
+    "bare-ws": "2.0.3",
+    "compact-encoding": "^2.18.0",
+    "crypto": "npm:bare-node-crypto",
+    "fs": "npm:bare-node-fs",
+    "path": "npm:bare-node-path",
+    "protomux": "^3.10.1",
+    "trac-msb": "git+https://github.com/Trac-Systems/main_settlement_bus.git#5088921",
+    "trac-peer": "git+https://github.com/Trac-Systems/trac-peer.git#d108f52",
+    "trac-wallet": "1.0.1",
+    "util": "npm:bare-node-util"
   },
-  "devDependencies": {
-    "brittle": "^3.5.1"
-  },
-  "engines": {
-    "pear": ">=2.0.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/YOUR_USERNAME/peerpredict.git"
-  },
-  "bugs": {
-    "url": "https://github.com/YOUR_USERNAME/peerpredict/issues"
-  },
-  "homepage": "https://github.com/YOUR_USERNAME/peerpredict#readme"
+  "overrides": {
+    "trac-wallet": "1.0.1"
+  }
 }
